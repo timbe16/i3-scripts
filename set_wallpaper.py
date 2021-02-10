@@ -3,7 +3,7 @@ import subprocess
 
 import requests
 import sys
-import hashlib
+import os
 import datetime
 
 # https://stackoverflow.com/questions/9084442/wikipedia-api-cannot-query-picture-of-the-day-url
@@ -63,19 +63,32 @@ def get_wiki_en_today_wallpaper_url():
 
 
 def download_image(file_name, url):
+    wpath = WALLPAPER_DIR + file_name
+    if os.path.isfile(wpath):
+        return wpath
     r = requests.get(url, allow_redirects=True)
-    path = WALLPAPER_DIR + file_name
-    open(path, 'wb').write(r.content)
+    open(wpath, 'wb').write(r.content)
 
-    return path
+    return wpath
 
 
 def set_desktop_wallpaper(filepath):
+    # print(filepath)
+    if os.path.isfile(filepath):
+        return
     args = ['feh', '--bg-fill', filepath]
     subprocess.call(args)
 
 
+def newest(path):
+    files = os.listdir(path)
+    paths = [os.path.join(path, basename) for basename in files]
+    return max(paths, key=os.path.getctime)
+
+
 if __name__ == "__main__":
+    set_desktop_wallpaper(newest(WALLPAPER_DIR))
+
     # wallpaper_url = get_alphacoders_wallpaper_url()
     filename, wallpaper_url = get_wiki_en_today_wallpaper_url()
     # print(filename)
