@@ -73,9 +73,7 @@ def download_image(file_name, url):
 
 
 def set_desktop_wallpaper(filepath):
-    # print(filepath)
-    if os.path.isfile(filepath):
-        return
+    print(filepath)
     args = ['feh', '--bg-fill', filepath]
     subprocess.call(args)
 
@@ -87,7 +85,9 @@ def newest(path):
 
 
 if __name__ == "__main__":
-    set_desktop_wallpaper(newest(WALLPAPER_DIR))
+    wallpaper_path_old = newest(WALLPAPER_DIR)
+    if wallpaper_path_old is not None:
+        set_desktop_wallpaper(newest(WALLPAPER_DIR))
 
     # wallpaper_url = get_alphacoders_wallpaper_url()
     filename, wallpaper_url = get_wiki_en_today_wallpaper_url()
@@ -95,5 +95,6 @@ if __name__ == "__main__":
     # print(wallpaper_url)
     # sys.exit(1)
 
-    wallpaper_path = download_image(filename, wallpaper_url)
-    set_desktop_wallpaper(wallpaper_path)
+    wallpaper_path_new = download_image(filename, wallpaper_url)
+    if wallpaper_path_old != wallpaper_path_new:
+        set_desktop_wallpaper(wallpaper_path_new)
